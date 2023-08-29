@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+{% block content %}
+<style>
+    p{
+    margin-left:10px;
+    color:black;
+    }
+    .order-scroll{
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    border-radius:10px;
+    list-style:none;
+    padding:0px 10px;
+
+
+    }
+     .order-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .order-scroll::-webkit-scrollbar-track {
+        background:#174129;
+    }
+
+    .order-scroll::-webkit-scrollbar-thumb {
+        background-color: #3e634e ;
+    }
+
+    .order-scroll2{
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    border-radius:10px;
+    list-style:none;
+    padding:0px 10px;
+
+
+    }
+     .order-scroll2::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .order-scroll2::-webkit-scrollbar-track {
+        background:#174129;
+    }
+
+    .order-scroll2::-webkit-scrollbar-thumb {
+        background-color: #3e634e ;
+    }
+ tr{
+   margin-top:20px;
+   border-bottom: 1px solid black;
+
+   }
+  th{
+  text-align:center;
+  color: #24382c;
+    padding:5px
+  }
+   td{
+  text-align:center;
+  color: #24382c;
+    padding:5px;
+    cursor: pointer;
+  }
+   .list-item:hover{
+       background-color: #7fba96;
+   }
+    .candidate-row:hover{
+       background-color: #7fba96;
+   }
+
+<!--  .selected-list-item {-->
+<!--    background-color: #7fba96;-->
+<!--}-->
+<!-- .selected-list-item2 {-->
+<!--    background-color: #7fba96;-->
+<!--}-->
+
+.selectedcandidate{
+display:none;
+position: absolute;
+top:40%;
+left:25%;
+z-index:9999;
+}
+.card .card-header{
+color:black;
+}
+</style>
+    <div class="content">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card card-chart">
+                       <div class="card-header">
+                           <div style="width:100%; display:flex; justify-content:space-between">
+                               <h4 class="card-title">Candidate Placed<i style="font-size:20px;margin-left:10px" class="fa fa-users" aria-hidden="true"></i>
+                            <span style="font-size:25px;margin-left:20px">{{ data_array.counters.candidateplace }}</span>
+                               </h4>
+                           </div>
+                       </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-chart">
+                    <div class="card-header">
+                            <div style="width:100%; display:flex; justify-content:space-between">
+                                <h4 class="card-title">Selected Candidates<i style="font-size:25px;margin-left:10px" class="fas fa-address-card" aria-hidden="true"></i>
+                                    <span style="font-size:25px;margin-left:15px" >{{ data_array.counters.totalcandidate }}</span>
+                                </h4>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-chart">
+                    <div class="card-header">
+                            <div style="width:100%; display:flex; justify-content:space-between">
+                                <h4 class="card-title">Submitted Forms<i style="font-size:20px;margin-left:10px" class="fas fa-file-alt" aria-hidden="true"></i>
+                                    <span style="font-size:25px;margin-left:40px" >{{ data_array.counters.totalforms}}</span>
+                                </h4>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+             <div class="col-lg-12">
+                <div class="card card-chart">
+                    <div class="card-header">
+                                <div>
+                                    <h4 class="card-title">Jobs Order</h4>
+                                     <div class="order-scroll">
+                                         <table style="margin:auto;">
+                                     <thead class=" text-primary">
+                                     <tr>
+                                         <th scope="col" width="250px">Posted On</th>
+                                         <th scope="col" width="150px">Pay Rate</th>
+                                         <th scope="col" width="150px">Shift</th>
+                                         <th scope="col" width="40px">Slots</th>
+                                         <th scope="col" width="140px">Action</th>
+                                     </tr>
+                                     </thead>
+                                     <tbody>
+                                      {% for job_order in jobsorder %}
+                                        {% if job_order.vacancy > 0 %}
+                                         <tr onclick="showCandidateList('{{ job_order.company_id }}', '{{ job_order.id }}')" class="list-item" data-id="{{ job_order.company_id  }}">
+                                           <td>
+                                             <span style="color: blue;">{{ job_order.created_at.strftime('%Y-%m-%d') }}</span><br>
+                                             <span style="font-weight: 600">{{ job_order.company }}</span><br>
+                                             needs: {{ job_order.title }}
+                                           </td>
+                                           <td>${{ job_order.payrate }} ({{ job_order.salarytype }})</td>
+                                           <td>{{ job_order.starttime }} to {{ job_order.endtime }}</td>
+                                           <td class="text-center">{{ job_order.vacancy }}</td>
+                                           <td>
+                                             <i style="margin-right:5px" class="fas fa-archive"></i>
+                                            <i class="fas fa-edit" onclick="showCandidateList('{{ job_order.id }}')"></i>
+                                           </td>
+                                          </tr>
+                                       {% endif %}
+                                      {% endfor %}
+</tbody>
+                                     </table>
+                                     </div>
+                                </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card card-chart">
+                    <div style="display:flex; align-items:center">
+                        <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                <h4 class="card-title">Deal Graphs</h4>
+                            </div>
+                        </div>
+                    </div>
+                       <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                   <label>sort by date:</label>
+                            <select id="dateFilterfordeal">
+                            <option value="all2">No filter</option>
+                            <option value="yesterday2">Yesterday</option>
+                            <option value="last3days2">Last 3 Days</option>
+                             <option value="custom2">Custom</option>
+                        </select>
+                              <form id="customDateFormfordeal" style="display:none;">
+                            <label for="startDate2">Start Date:</label>
+                            <input type="date" id="startDate2" required>
+
+                            <label for="endDate1">End Date:</label>
+                            <input type="date" id="endDate2" required>
+
+                            <button type="submit">Apply</button>
+                          </form>
+                            </div>
+                        </div>
+                       </div>
+                        <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                   <label>sort by names:</label>
+                                   <select id="selectUsernamefordeal">
+                                     <option>No filter</option>
+                                     {% for username in data_array.usernames %}
+                                       <option>{{ username }}</option>
+                                     {% endfor %}
+                                   </select>
+                            </div>
+                        </div>
+                       </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="DealChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-chart">
+                    <div style="display:flex; align-items:center">
+                        <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                <h4 class="card-title">Candidates Graphs</h4>
+                            </div>
+                        </div>
+                    </div>
+                       <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                   <label>sort by date:</label>
+                            <select id="dateFilterforcan">
+                            <option value="all1">No filter</option>
+                            <option value="yesterday1">Yesterday</option>
+                            <option value="last3days1">Last 3 Days</option>
+                             <option value="custom1">Custom</option>
+                        </select>
+                              <form id="customDateFormforcan" style="display:none;">
+                            <label for="startDate1">Start Date:</label>
+                            <input type="date" id="startDate1" required>
+
+                            <label for="endDate1">End Date:</label>
+                            <input type="date" id="endDate1" required>
+
+                            <button type="submit">Apply</button>
+                          </form>
+                            </div>
+                        </div>
+                       </div>
+                        <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                   <label>sort by names:</label>
+                                   <select id="selectUsernamefor">
+                                     <option>No filter</option>
+                                     {% for username in data_array.usernames %}
+                                       <option>{{ username }}</option>
+                                     {% endfor %}
+                                   </select>
+                            </div>
+                        </div>
+                       </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="candidateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="card card-chart">
+                      <div style="display:flex; align-items:center">
+                       <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                <h4 class="card-title">Placement Graphs</h4>
+                            </div>
+                        </div>
+                    </div>
+                       <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                   <label>sort by date:</label>
+                                   <select id="dateFilter">
+                            <option value="all">No filter</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="last3days">Last 3 Days</option>
+                             <option value="custom">Custom</option>
+                        </select>
+                              <form id="customDateForm">
+                            <label for="startDate">Start Date:</label>
+                            <input type="date" id="startDate" required>
+                            <label for="endDate">End Date:</label>
+                            <input type="date" id="endDate" required>
+                            <button type="submit">Apply</button>
+                          </form>
+                            </div>
+                        </div>
+                       </div>
+                        <div class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 text-left">
+                                   <label>sort by names:</label>
+                                   <select id="selectUsername">
+                                     <option>No filter</option>
+                                     {% for username in data_array.usernames %}
+                                       <option>{{ username }}</option>
+                                     {% endfor %}
+                                   </select>
+                            </div>
+                        </div>
+                       </div>
+                      </div>
+                      <div class="card-body">
+                        <div class="chart-area" style="height: 500px;">
+                            <canvas id="placementChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+          </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block javascripts %}
+<script>
+    var dataFromServer = {{ data_array|tojson }};
+
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/js/demos.js
+        demo.initDashboardPageCharts();
+    });
+ document.addEventListener("click", function(event) {
+    const closeIcon = event.target.closest(".fas.fa-window-close");
+    if (closeIcon) {
+        const selectedCandidateDiv = document.querySelector('.selectedcandidate');
+        selectedCandidateDiv.style.display = 'none';
+    }
+});
+</script>
+<script>
+    function showPdf(emailId) {
+    const pdfWindow = window.open(`/pdf_content/${emailId}`);
+    markEmailAsRead(emailId);
+}
+var jobid = "";
+
+function showCandidateList(listId, orderId) {
+    const selectedCandidateDiv = document.querySelector('.selectedcandidate');
+    jobid = listId;
+    OrderId = orderId;
+    console.log(jobid,OrderId);
+    selectedCandidateDiv.style.display = 'block';
+
+    const clickedListItem = document.querySelector(`.list-item[data-id="${listId}"]`);
+    clickedListItem.classList.add('selected-list-item');
+
+    const candidateRows = document.querySelectorAll('.candidate-row');
+    candidateRows.forEach(row => {
+        row.addEventListener('click', function() {
+            const candidateId = row.getAttribute('data-id');
+            redirectToReportingForm(candidateId, jobid,OrderId);
+            clickedListItem.classList.remove('selected-list-item');
+        });
+    });
+}
+
+function redirectToReportingForm(candidateId) {
+    // Remove 'selected-list-item' and 'selected-list-item2' classes from all candidate rows
+    const candidateRows = document.querySelectorAll('.candidate-row');
+    candidateRows.forEach(candidateRow => {
+        candidateRow.classList.remove('selected-list-item');
+    });
+
+    // Hide the selectedCandidateDiv
+    const selectedCandidateDiv = document.querySelector('.selectedcandidate');
+    selectedCandidateDiv.style.display = 'none';
+
+    // Redirect to the reporting form
+    window.location.href = `/onereporting_form/${candidateId}/job/${jobid}/OrderId/${OrderId}`;
+}
+</script>
+{% endblock javascripts %}
