@@ -84,7 +84,7 @@
 .selectedcandidate{
 display:none;
 position: absolute;
-top:40%;
+top:15%;
 left:25%;
 z-index:9999;
 }
@@ -172,6 +172,64 @@ color:black;
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row selectedcandidate">
+             <div style="margin:auto;" class="col-lg-9 ">
+                <div class="card card-chart">
+                    <div class="card-header">
+                     <div>
+                         <div style="display:flex; justify-content:space-between; align-items:center;">
+                             <h4 class="card-title">Select Candidates</h4>
+                             <i onclick="close()" style="margin-bottom:10px; margin-right:30px" class="fas fa-window-close"></i>
+                         </div>
+                     <div class="order-scroll2">
+                     <table style="margin:auto;">
+                       <thead>
+                        <tr>
+                            <th scope="col" width="20%">Applicant Info</th>
+                            <th scope="col" width="25%">Job Detail</th>
+                            <th scope="col" width="10%">Resumes</th>
+                            <th scope="col" width="25%">Current Status</th>
+
+                        </tr>
+                      </thead>
+                       <tbody>
+                         {% if alldata|length > 0 %}
+                         {% for name in alldata %}
+                              <tr  class="candidate-row" data-id="{{ name.id }}">
+                               <td data-label="Due Date">
+                                 {{ name.sender_name }} <br>
+                                 {% if name.email == 'No Email!' %}
+                                     <span style="color: red;">{{ name.email }}</span> <br>
+                                 {% else %}
+                                     {{ name.email }} <br>
+                                 {% endif %}
+                                 {{ name.phone_number }}
+                            </td>
+                               <td data-label="Amount">{{ name.subject_part1  }} <br> From: {{ name.subject_part2  }}</td>
+                                <td data-label="Amount">
+                                    <a href="#" style=" padding-bottom:2px; border-bottom: 1px solid #24382c;"
+                                       onclick="showPdf('{{ name.id }}'); return false;">
+                                       View PDF
+                                    </a>
+                                </td>
+                                 <td> {{name.status}}</td>
+                           </tr>
+                         {% endfor %}
+                         {% else %}
+                              <tr>
+                                   <td class="text-center" colspan="5">Empty</td>
+                            </tr>
+                            {% endif %}
+                       </tbody>
+                     </table>
+                     </div>
+                     </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
         <div class="row">
             <div class="col-lg-6">
@@ -358,6 +416,7 @@ color:black;
 var jobid = "";
 
 function showCandidateList(listId, orderId) {
+    console.log("show list")
     const selectedCandidateDiv = document.querySelector('.selectedcandidate');
     jobid = listId;
     OrderId = orderId;

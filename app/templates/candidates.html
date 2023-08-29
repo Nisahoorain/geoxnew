@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %} Tables {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+
+{% if session['role'] %}
+<style>
+   tr{
+   margin-top:20px;
+   border-bottom: 1px solid black;
+
+   }
+  th{
+  text-align:center;
+  color: #24382c;
+    padding:5px
+  }
+   td{
+  text-align:center;
+  color: #24382c;
+    padding:5px
+  }
+
+.active-button {
+      background-color: green;
+    }
+    .search {
+    padding: 5px;
+    display: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid black;
+
+}
+    .hicon {
+    margin-right: 20px;
+    font-size: 22px !important;
+    position: relative;
+}
+
+.hicon:nth-child(1):after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: red;
+    border-radius: 10px;
+    left: 13px;
+    top: 7px;
+    transform: scale(0.5);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+    animation: pulse-red 2s infinite;
+    cursor: pointer;
+
+}
+
+@keyframes pulse-red {
+    0% {
+        transform: scale(0.85);
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 25px rgba(255, 82, 82, 0);
+    }
+
+    100% {
+        transform: scale(0.85);
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+    }
+}
+
+.search-div{
+text-align: right;
+ margin-top: 20px;
+ position: relative;
+ width: 100%;
+ padding-right: 15px;
+ padding-left: 15px
+}
+.data-row.unread {
+    background-color: #f0f0f0; /* Apply a different background color for read rows */
+}
+
+</style>
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="card ">
+            <div style="display: flex;">
+               <form action="{{ url_for('candidate') }}" method="">
+                   <div class="card-header">
+                        <button class="card-title {% if active_url == 'candidate' %}active-button{% endif %}" id="candidate-button">Applied Candidates</button>
+                   </div>
+               </form>
+               <form action="{{ url_for('selecteddata') }}" method="">
+                  <div class="card-header">
+                       <button class="card-title {% if active_url == 'selecteddata' %}active-button{% endif %}" id="selected-button">Selected Candidates</button>
+                  </div>
+              </form>
+                 <div class="search-div">
+                     <input type="text" class="search" >
+                     <i class="fa fa-search hicon sicon"></i>
+<!--                       <input type="date" id="fromDate" placeholder="From Date">-->
+<!--                       <input type="date" id="toDate" placeholder="To Date">-->
+<!--                       <button id="dateFilterButton">Filter</button>-->
+                 </div>
+                <div class="clearfix"></div>
+            </div>
+         <div class="card-body">
+          <div class="">
+              <table style="overflow-x: auto;" id="dataTable" >
+                    <thead>
+                        <tr>
+                            <th scope="col" width="20%">Applicant Info</th>
+                            <th scope="col" width="25%">Job Detail</th>
+                            <th scope="col" width="8%">Date</th>
+                           <th scope="col" width="10%">Resumes</th>
+                            <th scope="col" width="15%">Current Status</th>
+                            <th scope="col" width="15%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if alldata|length > 0 %}
+                    {% for name in alldata %}
+                         <tr class="data-row{% if name.is_read %} read{% else %} unread{% endif %}" data-email-id="{{ name.id }}">
+                            <td data-label="Due Date">
+                                 {{ name.sender_name }} <br>
+                                 {% if name.email == 'No Email!' %}
+                                     <span style="color: red;">{{ name.email }}</span> <br>
+                                 {% else %}
+                                     {{ name.email }} <br>
+                                 {% endif %}
+                                 <a href="tel:{{name.phone_number}}">{{ name.phone_number }}</a>
+                            </td>
+                            <td data-label="Amount">{{ name.subject_part1  }} <br> From: {{ name.subject_part2  }}</td>
+                            <td data-label="Amount">{{ name.formatted_date  }}</td>
+                             <td data-label="Amount">
+                                 <a href="#" style=" padding-bottom:2px; border-bottom: 1px solid #24382c;"
+                                    onclick="markEmailAsRead('{{ name.id }}'); showPdf('{{ name.id }}'); return false;">
+                                    View PDF
+                                 </a>
+                             </td>
+                            {% if  url_for('selecteddata') == request.path %}
+                             <td> {{name.status}}
+                                 {% if session['role'] %}
+                                   <a style="text-align:center"  href="/onereporting_form/{{name.id}}">
+                                      <br>
+                                 {% if name.status !='Candidate Placement' %}
+                                      <i style="font-size:18px;" class="fas fa-edit"></i>
+                                  {% endif %}
+                                   </a>
+                             </td>
+                             {% endif %}
+                            {% else %}
+                            <td style="text-align:center"> applied </td>
+                            {% endif %}
+                            {% if name.action == 'Interested' %}
+                               <td>
+                                 <a href="" onclick="handleSelectionChange('{{ name.id }}', 'Not Interested')"><i  style="color:red; font-size:20px;"  class="fas fa-times"></i></a>
+                                 <a href="" onclick="handleSelectionChange('{{ name.id }}', 'Reverse changes')"><i style="font-size:20px;"  class="fas fa-undo"></i></a>
+                               </td>
+                            {% else %}
+                                <td>
+                                  <a href="" onclick="handleSelectionChange('{{ name.id }}', 'Interested')"><i style="font-size:20px;"  class="fas fa-check-square"></i></a>
+                                  <a href="" onclick="handleSelectionChange('{{ name.id }}', 'Not Interested')"><i  style="color:red; font-size:20px;"    class="fas fa-times"></i></a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    {% else %}
+                         <tr>
+                                <td class="text-center" colspan="5">Empty</td>
+                         </tr>
+                       {% endif %}
+                    </tbody>
+                </table>
+              <div id="pdfViewer" style="display: none;">
+        <object id="pdfObject" type="application/pdf" width="100%" height="800px"></object>
+        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script>//more action
+  function handleSelectionChange(id, selectedOption) {
+    debugger;
+    console.log(selectedOption);
+    if (selectedOption == 'Interested' || selectedOption == 'Reverse changes') {
+      fetch('/updatemail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id, selectedOption: selectedOption }), // Include the 'id' parameter here
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message) {
+           window.location.href = "{{ url_for('selecteddata') }}";
+          }
+          // Handle the response from the server if needed
+          console.log(data);
+        })
+        .catch((error) => {
+          // Handle errors if any
+          console.error('Error:', error);
+        });
+    } else {
+      fetch('/deletemail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id }), // Include the 'id' parameter here
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.message) {
+            window.location.href = "{{ url_for('candidate') }}";
+          }
+          // Handle the response from the server if needed
+          console.log(data);
+        })
+        .catch((error) => {
+          // Handle errors if any
+          console.error('Error:', error);
+        });
+    }
+  }
+  //more action --end</script>
+<script>
+$(document).ready(function () {
+    $(".sicon").click(function () {
+        $(".search").toggle(1000);
+    });
+
+    $(".search").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $(".data-row").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+
+    $("#dateFilterButton").click(function () {
+    var fromDate = new Date($("#fromDate").val());
+    var toDate = new Date($("#toDate").val());
+
+    // Adjust toDate to the next day to include the entire day
+    toDate.setDate(toDate.getDate() + 1);
+
+    console.log("From Date:", fromDate);
+    console.log("To Date:", toDate);
+
+  $("#dateFilterButton").click(function () {
+    var fromDate = new Date($("#fromDate").val());
+    var toDate = new Date($("#toDate").val());
+
+    // Adjust toDate to the next day to include the entire day
+    toDate.setDate(toDate.getDate() + 1);
+
+    console.log("From Date:", fromDate);
+    console.log("To Date:", toDate);
+
+    $(".data-row").each(function () {
+        var dateText = $(this).find("td:eq(2)").text(); // Assuming date is in the third column
+        var parts = dateText.split('/'); // Split the date string into parts
+        var rowDate = new Date(parts[2], parts[0] - 1, parts[1]); // Create a Date object
+
+        if (!isNaN(rowDate)) {
+            if (fromDate && toDate) {
+                var validRow = (rowDate >= fromDate && rowDate < toDate);
+                $(this).toggle(validRow);
+            }
+        } else {
+            // Handle invalid date format here, if necessary
+        }
+    });
+});
+});
+});
+// active url
+    window.addEventListener('load', function() {
+      // Get the current URL path
+      var currentUrl = window.location.pathname;
+      var candidateButton = document.getElementById("candidate-button");
+      var selectedButton = document.getElementById("selected-button");
+      if (currentUrl === "{{ url_for('candidate') }}") {
+        candidateButton.style.backgroundColor = "#24382c";
+        candidateButton.style.color = "#ffffff";
+      }
+      if (currentUrl === "{{ url_for('selecteddata') }}") {
+        selectedButton.style.backgroundColor = "#24382c";
+         selectedButton.style.color = "#ffffff";
+      }
+    });
+// active url --end
+
+
+
+
+
+  </script>
+<script>
+    <!--read unread-->
+    function updateRowStatus(emailId, isRead) {
+        const row = document.querySelector(`tr[data-email-id="${emailId}"]`);
+        if (row) {
+            row.classList.remove('unread', 'read');
+            row.classList.add(isRead ? 'read' : 'unread');
+        }
+    }
+
+    // On page load, update row statuses using local storage
+    window.addEventListener('load', function() {
+        const rows = document.querySelectorAll('.data-row');
+        rows.forEach(row => {
+            const emailId = row.getAttribute('data-email-id');
+            const isRead = localStorage.getItem(`email_${emailId}`);
+            if (isRead !== null) {
+                updateRowStatus(emailId, isRead === 'true');
+            }
+        });
+    });
+
+    // When viewing a PDF, update the row status and local storage
+    function markEmailAsRead(emailId) {
+        fetch(`/mark_as_read/${emailId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    updateRowStatus(emailId, true); // Update the row status
+                    localStorage.setItem(`email_${emailId}`, 'true');
+                }
+            })
+            .catch(error => {
+                console.error('Error marking email as read:', error);
+            });
+    }
+
+    //pdf view
+    function showPdf(emailId) {
+    markEmailAsRead(emailId);
+    updateRowStatus(emailId, true);
+    const pdfWindow = window.open(`/pdf_content/${emailId}`);
+    pdfWindow.addEventListener('beforeunload', () => {
+        markEmailAsRead(emailId); // Call markEmailAsRead when PDF tab/window is closed
+    });
+}
+
+    //pdf view --end
+</script>
+{% endif %}
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
+

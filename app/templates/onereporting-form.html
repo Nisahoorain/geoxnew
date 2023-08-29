@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+
+    <!--<title>Registration Form in HTML CSS</title>-->
+    <!---Custom CSS File--->
+</head>
+<style>
+    /* Import Google font - Poppins */
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #174129;
+    }
+
+    .container {
+        position: relative;
+        max-width: 700px;
+        width: 100%;
+        background: #fff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .container header {
+        font-size: 1.5rem;
+        color: #333;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 10px;
+
+    }
+
+    .container p {
+        font-size: 15px;
+        color: #333;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .container .logo {
+        width: 150px;
+
+    }
+
+    .container .form {
+        margin-top: 30px;
+        margin-bottom: 50px;
+    }
+
+    .form .input-box {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .input-box label {
+        color: #333;
+    }
+
+    .form :where(.input-box input, .select-box) {
+        position: relative;
+        height: 50px;
+        width: 100%;
+        outline: none;
+        font-size: 1rem;
+        color: #707070;
+        margin-top: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 0 15px;
+    }
+
+    .form :where(.area-box) {
+        position: relative;
+        height: 150px;
+        width: 100%;
+        outline: none;
+        font-size: 1rem;
+        color: #707070;
+        margin-top: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 0 15px;
+    }
+
+    .input-box input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .form .column {
+        display: flex;
+        column-gap: 15px;
+    }
+
+    .form .gender-box {
+        margin-top: 20px;
+    }
+
+    .gender-box h3 {
+        color: #333;
+        font-size: 1rem;
+        font-weight: 400;
+        margin-bottom: 8px;
+    }
+
+    .form :where(.gender-option, .gender) {
+        display: flex;
+        align-items: center;
+        column-gap: 50px;
+        flex-wrap: wrap;
+    }
+
+    .form .gender {
+        column-gap: 5px;
+    }
+
+    .gender input {
+        accent-color: #174129;
+    }
+
+    .form :where(.gender input, .gender label) {
+        cursor: pointer;
+    }
+
+    .gender label {
+        color: #707070;
+    }
+
+    .address :where(input, .select-box) {
+        margin-top: 15px;
+    }
+
+    .select-box select {
+        height: 100%;
+        width: 100%;
+        outline: none;
+        border: none;
+        color: #707070;
+        font-size: 1rem;
+    }
+
+    .form button {
+        height: 55px;
+        width: 100%;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 400;
+        margin-top: 30px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #174129;
+    }
+
+    .form button:hover {
+        background: #b3bbd1;
+        color: #174129;
+    }
+
+    .forsubform {
+        padding-bottom: 20px;
+        border-bottom: 2px solid #8a8787;
+    }
+
+    /* .subform-content{
+  padding-bottom: 20px;
+  border-bottom: 2px solid #8a8787;
+} */
+    .subform-content-head h2 {
+        font-size: 1.5rem;
+        color: #2e2c2c;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .subform-content-head p {
+        text-align: left;
+    }
+
+    .inputsfor {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .inputsfor .input-box {
+        width: 48%;
+    }
+
+    /*Responsive*/
+    @media screen and (max-width: 500px) {
+        .form .column {
+            flex-wrap: wrap;
+        }
+
+        .form :where(.gender-option, .gender) {
+            row-gap: 15px;
+        }
+    }
+
+    .span {
+        font-size: 12px;
+    }
+</style>
+
+<body>
+    <section class="container">
+        <img class="logo" src="{{ config.ASSETS_ROOT }}/img/Logo2.png" alt="">
+        <header>One reporting form</header>
+        <p>Each incident would have one report per occurrence.</p>
+        <section class="form">
+            <div class="forsubform">
+                <div class="input-box">
+                    <label>Full Name <span>*</span></label>
+                    <input type="text" placeholder="Enter full name" required value="{{session['user']}}"/>
+                </div>
+                <div class="gender-box">
+                    <h3>Which form<span>*</span><br>
+                    </h3>
+                    <div class="gender-option">
+                        <div class="gender">
+                            <input type="radio" id="Marketing-radio" name="gender"
+                                onchange="showmaincontent('Marketing')" checked />
+                            <label for="Marketing-radio">Marketing</label>
+                        </div>
+                        <div class="gender">
+                            <input type="radio" id="Recruiting-radio" name="gender"
+                                onchange="showmaincontent('recuriting')" disabled />
+                            <label for="Recruiting-radio">Recruiting</label>
+                        </div>
+                        <div class="gender">
+                            <input type="radio" id="HRforms-radio" name="gender"
+                                onchange="showmaincontent('HRForms')" />
+                            <label for="HRforms-radio">HR forms</label>
+                        </div>
+                        <div class="gender">
+                            <input type="radio" id="Other-radio" name="gender"
+                                onchange="showmaincontent('Otherreport')" />
+                            <label for="Other-radio">Other</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="contentchanging">
+                <div class="recuriting" id="recuriting" style="display: none;">
+                    <form action="">
+                        <div class="recuriting-content">
+                            <div class="subform-content-head">
+                                <h2>Recruiting</h2>
+                                <p>Please select on of the following ( one report per candidates ).</p>
+                            </div>
+                            <div class="input-box">
+                                <label>Name of candidate <span>*</span></label>
+                                <input type="text" placeholder="Enter full name" required />
+                            </div>
+                            <div class="inputsfor">
+                                <div class="input-box">
+                                    <label>Phone number <span>*</span></label>
+                                    <input type="text" placeholder="Enter phone number"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
+                                </div>
+                                <div class="input-box">
+                                    <label>Postion <span>*</span></label>
+                                    <input type="text" placeholder="Enter Postion" required />
+                                </div>
+                            </div>
+
+                            <div class="input-box">
+                                <label>Company name ( Placement, resume sent, or helped another recruiter
+                                    for?)<span>*</span></label>
+                                <input type="text" placeholder="Enter Company name" required />
+                            </div>
+
+                            <div class="gender-box">
+                                <h3>Did you:<span>*</span><br>
+                                </h3>
+                                <div>
+                                    <div class="gender">
+                                        <input type="radio" id="CandidatePlacementRadio" name="Didyou" checked
+                                            onchange="showDiv('CandidatePlacement')">
+                                        <label for="CandidatePlacementRadio">Candidate Placement</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="ResumeSentRadio" name="Didyou"
+                                            onchange="showDiv('ResumeSent')">
+                                        <label for="ResumeSentRadio">Resume Sent OR Interview Scheduled</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="HelpAnotherRadio" name="Didyou"
+                                            onchange="showDiv('Helpanother')">
+                                        <label for="HelpAnotherRadio">Help Another Recruiter</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="recuriting-did">
+                            <div id="CandidatePlacement">
+                                <div class="subform-content-head">
+                                    <h2>Recruiting person placement</h2>
+                                    <p>Please fill this out once per candidate.</p>
+                                </div>
+                                <div class="input-box">
+                                    <label>Emergency Contact Name <span>*</span></label>
+                                    <input type="text" placeholder="Enter full name" required />
+                                </div>
+                                <div class="inputsfor">
+                                    <div class="input-box">
+                                        <label>Emergency contact number <span>*</span> <br>
+                                            <span class="span"> ( cannot be the same as their phone number)</span>
+                                        </label>
+                                        <input type="text" placeholder="Enter phone number"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
+                                    </div>
+                                    <div class="input-box">
+                                        <label>Location of candidate <span>*</span> <br>
+                                            <span class="span">(ie: north york , Scarborough , Vaughan , etc..)</span>
+                                        </label>
+                                        <input type="text" placeholder="Enter Location" required />
+                                    </div>
+                                </div>
+
+                                <div class="input-box">
+                                    <label>Location candidate is going to<span>*</span></label>
+                                    <input type="text" placeholder="Enter Location" required />
+                                </div>
+                                <div class="input-box">
+                                    <label>Start time and date<span>*</span></label>
+                                    <input type="text" placeholder="Enter Company name" required />
+                                </div>
+
+                                <div class="gender-box">
+                                    <h3>Do you need a team member to double confirm candidate - example morning before,
+                                        or
+                                        late
+                                        hours<span>*</span><br>
+                                    </h3>
+                                    <div class="gender-option">
+                                        <div class="gender">
+                                            <input type="radio" id="check-male" value="yes" name="needteam" checked />
+                                            <label for="check-male">Yes</label>
+                                        </div>
+                                        <div class="gender">
+                                            <input type="radio" id="check-female" value="no" name="needteam" />
+                                            <label for="check-female">No</label>
+                                        </div><br>
+                                    </div>
+                                </div>
+                                <div class="input-box">
+                                    <label>Photo ID ( govt Id) <span>*</span></label>
+                                </div>
+                                <input type="file" id="myFile" name="filename">
+
+                            </div>
+                            <div id="ResumeSent" style="display: none;">
+                                <div class="subform-content-head">
+                                    <h2>Resume Sent OR interview scheduled</h2>
+                                </div>
+                                <div class="gender-box">
+                                    <h3>Resume Or interview<span>*</span><br>
+                                    </h3>
+                                    <div class="gender-option">
+                                        <div class="gender">
+                                            <input type="radio" id="sent" name="sent" checked />
+                                            <label for="sent">Resume sent</label>
+                                        </div>
+                                        <div class="gender">
+                                            <input type="radio" id="Interview" name="sent" />
+                                            <label for="Interview">Interview</label>
+                                        </div><br>
+                                    </div>
+                                </div>
+                                <div class="input-box">
+                                    <label>when will the company get back to you date / when is the
+                                        interview?<span>*</span></label>
+                                    <input type="date" placeholder="Enter Company name" required />
+                                </div>
+
+
+                            </div>
+                            <div id="Helpanother" style="display: none;">
+                                <div class="subform-content-head">
+                                    <h2>Helping form</h2>
+                                    <p>This is to track who you are helping and for which candidate, and to track if the
+                                        candidate that you located has been placed</p>
+                                </div>
+                                <div class="input-box">
+                                    <label>Who did you help?<span>*</span></label>
+                                    <input type="text" placeholder="Your Answer" required />
+                                </div>
+                                <div class="gender-box">
+                                    <h3>iI person starting ( next 2 days) or is a resume being sent?<span>*</span><br>
+                                    </h3>
+                                    <div>
+                                        <div class="gender">
+                                            <input type="radio" id="Resumesent/interview" name="resume" checked />
+                                            <label for="Resumesent/interview">Resume sent / interview</label>
+                                        </div><br>
+                                        <div class="gender">
+                                            <input type="radio" id="Personstartingsoon" name="resume" />
+                                            <label for="Personstartingsoon">Person starting soon</label>
+                                        </div><br>
+                                        <div class="gender">
+                                            <input type="radio" id="NotSure" name="resume" />
+                                            <label for="NotSure">Not Sure</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="final-content">
+                            <div class="subform-content-head">
+                                <h2>Final</h2>
+                            </div>
+                            <div class="input-box">
+                                <label>Other report <span>*</span></label>
+                                <input type="text" placeholder="your report" required />
+                            </div>
+
+                            <div class="input-box">
+                                <label>Notes<span>*</span></label>
+                                <input type="text" placeholder="notes" required />
+                            </div>
+                        </div>
+
+                        <br>
+                        <button type="submit" name="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="Marketing" id="Marketing">
+                    <form action="/marketing" method="post">
+                        <input type="text" placeholder="Enter full name" name="name" value="{{session['user']}}"
+                            hidden />
+                        <input type="text" placeholder="Enter Your name" name="user_id" hidden
+                            value="{{session['user_id']}}" />
+                        <div class="Marketing-content">
+                            <div class="subform-content-head">
+                                <h2>Marketing</h2>
+                            </div>
+                            <div class="input-box">
+                                <label>Company name ( deal name)
+                                    <span>*</span></label>
+                                <input type="text" placeholder="Enter full name" name="company" required />
+                            </div>
+                            <div class="input-box">
+                                <label>Contact person (deal) <span>*</span></label>
+                                <input type="text" placeholder="Enter full name" name="cperson" required />
+                            </div>
+                            <div class="input-box">
+                                <label>Contact person phone <span>*</span></label>
+                                <input type="text" placeholder="Enter phone number"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="phone" required />
+                            </div>
+                            <!-- # 9-8-2023 start -->
+                            <div id="jobs-container"  style="margin-top:20px;">
+
+                                <label>Job 1 <span>*</span></label>
+                                <div class="input-box">
+                                    <label>Title<span>*</span></label>
+                                    <input type="text" placeholder="Job Title" name="job_title" required />
+                                </div>
+                                <div class="inputsfor">
+                                    <div class="input-box">
+                                        <label>Pay Rate <span>*</span></label>
+                                        <input type="number" placeholder="Pay Rate" name="pay_rate" required />
+                                    </div>
+                                    <div class="input-box">
+                                        <label>Pay Rate <span>*</span></label>
+
+                                        <select class="select-box" name="pay_rate_type">
+                                            <option>Monthly </option>
+                                            <option>Yearly </option>
+                                            <option>Hourly</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="inputsfor">
+                                    <div class="input-box">
+                                        <label>Shifts<span>*</span></label>
+                                        <div class="inputsfor">
+                                            <input type="time" name="shift_start" required />
+                                            <input type="time" required name="shift_end" />
+                                        </div>
+
+                                    </div>
+                                    <div class="input-box">
+                                        <label>Total Vacancies <span>*</span></label>
+                                        <input type="number" name="total_vacancies" placeholder="0" required />
+                                    </div>
+                                </div>
+<!--                                <div class="gender-box">-->
+<!--                                    <h3>Job Status-->
+<!--                                        <span>*</span><br>-->
+<!--                                    </h3>-->
+<!--                                   <div>-->
+                                       <input type="hidden" name="job_count" id="job_count" value="1">
+<!--                                       <div class="gender">-->
+<!--                                           <input type="radio" id="active1" name="jobstatus1" value="active" checked>-->
+<!--                                           <label for="active1">Active</label>-->
+<!--                                       </div><br>-->
+<!--                                       <div class="gender">-->
+<!--                                           <input type="radio" id="inactive1" name="jobstatus1" value="inactive">-->
+<!--                                           <label for="inactive1">Inactive</label>-->
+<!--                                       </div><br>-->
+<!--                                   </div>-->
+<!--                                </div>-->
+                            </div>
+                            <div>
+                                <button id="add-job-button"
+                                    style="width:25%; display: block; margin-left: auto; margin-top:10px">+ add more
+                                    jobs</button>
+                            </div>
+                            <div class="input-box">
+                                <label>Job Location<span>*</span></label>
+                                <input type="text" placeholder="Enter location" name="location" required />
+                            </div>
+                            <div class="input-box job-section">
+                                <label>Markup<span>*</span></label>
+                                <input type="number" placeholder="Enter Markup in numbers"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" required name="markup" />
+                            </div>
+                            <div class="gender-box">
+                                <h3>Status
+                                    <span>*</span><br>
+                                </h3>
+                                <div>
+                                    <div class="gender">
+                                        <input type="radio" id="Newdeal" name="Status" value="New deal opened and contract signed" >
+                                        <label for="Newdeal">New deal opened and contract signed</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="Newdealnot" name="Status" value="New deal and contract not signed">
+                                        <label for="Newdealnot">New deal and contract not signed</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="Reopeneddeals" name="Status" value="Reopened deals">
+                                        <label for="Reopeneddeals">Reopened deals</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="final-content">
+                            <div class="subform-content-head">
+                                <h2>Final</h2>
+                            </div>
+                            <div class="input-box">
+                                <label>Other report <span>*</span></label>
+                                <textarea class="area-box" id="otherreport" name="otherreport" required></textarea>
+                            </div>
+
+                            <div class="input-box">
+                                <label>Notes<span>*</span></label>
+                                <textarea class="area-box" id="notes" name="notes" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" name="submit">Submit</button>
+                    </form>
+                    <br>
+                </div>
+                <div class="HRForms" id="HRForms" style="display: none;">
+                    <form action="/hrforms" method="post">
+                        <input type="text" placeholder="Enter full name" name="name" value="{{session['user']}}"
+                            hidden />
+                        <input type="text" placeholder="Enter Your name" name="user_id" hidden
+                            value="{{session['user_id']}}" />
+                        <div class="HRForms-content">
+                            <div class="subform-content-head">
+                                <h2>HR Forms</h2>
+                            </div>
+                            <div class="input-box">
+                                <label>Candidate Name<span>*</span></label>
+                                <input type="text" placeholder="Enter full name" name="cname" required
+                                     />
+                            </div>
+                            <div class="gender-box">
+                                <h3>Late or absent
+                                    <span>*</span><br>
+                                </h3>
+                                <div>
+                                    <div class="gender">
+                                        <input type="radio" id="Late" name="Late/absent" value="late" checked
+                                            onchange="showDivform('Late')">
+                                        <label for="Late">Late</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="Absence" name="Late/absent" value="absence"
+                                            onchange="showDivform('Absence')">
+                                        <label for="Absence">Absence</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="Incident" name="Late/absent" value="incident"
+                                            onchange="showDivform('Incidentdiv')">
+                                        <label for="Incident">Incident</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="Request for leave" name="Late/absent"
+                                            value="request for leave" onchange="showDivform('Requestforleavediv')">
+                                        <label for="Request for leave">Request for leave</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gender-box">
+                                <h3>Informed or uninformed
+                                    <span>*</span><br>
+                                </h3>
+                                <div>
+                                    <div class="gender">
+                                        <input type="radio" id="Informed" name="Informed/uninformed" value="informed">
+                                        <label for="Informed">Informed</label>
+                                    </div><br>
+                                    <div class="gender">
+                                        <input type="radio" id="Uniformed" name="Informed/uninformed"
+                                            value="uninformed">
+                                        <label for="Uniformed">Uniformed</label>
+                                    </div><br>
+                                </div>
+                            </div>
+                            <div class="input-box">
+                                <label>Notes<span>*</span></label>
+                                <textarea class="area-box" id="notes" name="notes" required></textarea>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="leave-content" id="Requestforleavediv" style="display: none;">
+                            <div class="subform-content-head">
+                                <h2>Request for leave</h2>
+                            </div>
+                            <div class="input-box">
+                                <label>Reason ( illness ,vacation, emergency) <span>*</span></label>
+                                <input type="text" placeholder="Your Answer" name="reasonvacation" />
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" name="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="Otherreport" id="Otherreport" style="display: none;">
+                    <form action="/otherfinal" method="post">
+                        <input type="text" placeholder="Enter full name" name="name" value="{{session['user']}}"
+                            hidden />
+                        <input type="text" placeholder="Enter Your name" name="user_id" hidden
+                            value="{{session['user_id']}}" />
+                        <div class="final-content">
+                            <div class="subform-content-head">
+                                <h2>Final</h2>
+                            </div>
+                            <div class="input-box">
+                                <label>Other report <span>*</span></label>
+                                <textarea class="area-box" id="otherreport" name="otherreport" required></textarea>
+                            </div>
+
+                            <div class="input-box">
+                                <label>Notes<span>*</span></label>
+                                <textarea class="area-box" id="notes" name="notes" required></textarea>
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" name="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </section>
+</body>
+<script>
+        const addJobButton = document.getElementById('add-job-button');
+        const jobsContainer = document.getElementById('jobs-container');
+
+
+        addJobButton.addEventListener('click', () => {
+        let jobCount = parseInt(document.getElementById('job_count').value);
+
+        jobCount++;
+        document.getElementById('job_count').value = jobCount;
+        const newJobSection = document.createElement('div');
+        newJobSection.classList.add('job-section');
+        newJobSection.innerHTML = `
+                <div>
+                    <label>Job ${jobCount} <span>*</span></label>
+                    <div class="input-box">
+                        <label>Title<span>*</span></label>
+                        <input type="text" placeholder="Job Title" name="job_title" required />
+                    </div>
+                    <div class="inputsfor">
+                        <div class="input-box">
+                            <label>Pay Rate <span>*</span></label>
+                            <input type="number" placeholder="Pay Rate" name="pay_rate" required />
+                        </div>
+                        <div class="input-box">
+                            <label>Pay Rate <span>*</span></label>
+                            <select class="select-box" name="pay_rate_type">>
+                                <option>Monthly</option>
+                                <option>Yearly</option>
+                                <option>Hourly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="inputsfor">
+                        <div class="input-box">
+                            <label>Shifts<span>*</span></label>
+                            <div class="inputsfor">
+                                <input type="time" name="shift_start" required />
+                                <input type="time" required name="shift_end" />
+                            </div>
+                        </div>
+                        <div class="input-box">
+                            <label>Total Vacancies <span>*</span></label>
+                            <input type="number" placeholder="0" name="total_vacancies" required />
+                        </div>
+                    </div>
+<!--                    <div class="gender-box">-->
+<!--                       <h3>Job Status <span>*</span><br></h3>-->
+<!--                     <div>-->
+<!--                       <div class="gender">-->
+<!--                        <input type="radio" id="active${jobCount}" name="jobstatus${jobCount}" value="active" checked>-->
+<!--                        <label for="active${jobCount}">Active</label>-->
+<!--                        </div><br>-->
+<!--                        <div class="gender">-->
+<!--                        <input type="radio" id="inactive${jobCount}" name="jobstatus${jobCount}" value="inactive">-->
+<!--                        <label for="inactive${jobCount}">Inactive</label>-->
+<!--                        </div><br>-->
+<!--                     </div>-->
+<!--                    </div>-->
+                </div>
+            `;
+         console.log(jobCount)
+        jobsContainer.appendChild(newJobSection);
+    });
+    </script>
+
+<script>
+    function showDiv(divId) {
+        var div = document.getElementById(divId);
+        var allDivs = document.getElementsByClassName('recuriting-did')[0].children;
+
+        for (var i = 0; i < allDivs.length; i++) {
+            if (allDivs[i].id === divId) {
+                allDivs[i].style.display = 'block';
+            } else {
+                allDivs[i].style.display = 'none';
+            }
+        }
+    }
+    function showDivform(divId) {
+        var div1 = document.getElementById(divId);
+        var div2 = document.getElementById('Incidentdiv');
+        var div3 = document.getElementById('Requestforleavediv');
+
+
+        if (div1 === div2) {
+            div2.style.display = 'block';
+            div.style.display = 'none';
+        } else if (div1 === div3) {
+            div3.style.display = 'block';
+            div2.style.display = 'none';
+        } else {
+            div2.style.display = 'none';
+        }
+    }
+
+    function showmaincontent(divId) {
+        var div = document.getElementById(divId);
+        var allDivs = document.getElementsByClassName('contentchanging')[0].children;
+
+        for (var i = 0; i < allDivs.length; i++) {
+            if (allDivs[i].id === divId) {
+                allDivs[i].style.display = 'block';
+            } else {
+                allDivs[i].style.display = 'none';
+            }
+        }
+    }
+</script>
+<!--display sweetalert(popup)-->
+<script>
+    function submitFormAndRedirect(endpoint) {
+        event.preventDefault();
+
+        fetch(endpoint, {
+            method: 'POST',
+            body: new FormData(event.target)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Form updated successfully!',
+                }).then(() => {
+                    window.location.href = '{{('forms')}}';
+                });
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating the form.');
+        });
+    }
+    document.querySelector('#Marketing form').addEventListener('submit', function (event) {
+        submitFormAndRedirect('/marketing');
+    });
+
+    document.querySelector('#HRForms form').addEventListener('submit', function (event) {
+        submitFormAndRedirect('/hrforms');
+    });
+
+    document.querySelector('#recuriting form').addEventListener('submit', function (event) {
+        submitFormAndRedirect('/resumesent');
+    });
+
+    document.querySelector('#Otherreport form').addEventListener('submit', function (event) {
+        submitFormAndRedirect('/otherfinal');
+    });
+</script>
+</html>

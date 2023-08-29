@@ -6,6 +6,7 @@ from flask_minify import Minify
 from config import config_dict
 from app import create_app, db
 
+
 app = Flask(__name__)
 
 
